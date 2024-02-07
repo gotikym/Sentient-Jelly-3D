@@ -7,56 +7,71 @@ public class Victory : MonoBehaviour
 {
     [SerializeField] private Player _player;
     [SerializeField] private Timer _timer;
-    [SerializeField] private List<Block> _allBlock;
+    [SerializeField] private List<Jelly> _allJelly;
+
+    private IDataProvider _dataProvider;
+
+    private Wallet _wallet;
+    private OpenLevels _openLevels;
+    private StarsLevels _starsLevels;
 
     private bool _isFinish;
     private float _timeForOneStart;
     private float _timeForTwoStart;
-    private string _mapMame;
+    private int _nextLevelNumber;
+    private int _levelNumber;
     private int _currentStarsCount;
-    private int _pointsForLevel;
+    private int _coinsForLevel;
     private int _previosStarsCount;
 
-    private const string UnlockedMapsKey = "unlockedMaps";
+    private const int LevelNumberAdjustment = 1;
 
     private const int OneStar = 1;
     private const int TwoStar = 2;
     private const int ThreeStar = 3;
 
-    private const int FirstMapIndex = 1;
     private const int multiplierTwo = 2;
     private const int multiplierThree = 3;
 
-    private const int PointsForOneStar = 500;
-    private const int PointsForTwoStar = 1000;
-    private const int PointsForThreeStar = 1500;
+    private const int CoinsForOneStar = 500;
+    private const int CoinsForTwoStar = 1000;
+    private const int CoinsForThreeStar = 1500;
 
     public static event Action LevelFinised;
     public event Action<int> StarsCalculated;
 
+    public void Initialize(IDataProvider dataProvider, Wallet wallet, OpenLevels openLevels, StarsLevels starsLevels)
+    {
+        _wallet = wallet;
+        _openLevels = openLevels;
+        _starsLevels = starsLevels;
+        _dataProvider = dataProvider;
+    }
+
     private void Start()
     {
-        _mapMame = SceneManager.GetActiveScene().name;
-        Jelly.JellyFilled += JellyFill;
+        _levelNumber = SceneManager.GetActiveScene().buildIndex;
+        _nextLevelNumber = _levelNumber + LevelNumberAdjustment;
+        Jelly.JellyFilled += OnJellyFill;
     }
 
     private void OnDestroy()
     {
-        Jelly.JellyFilled -= JellyFill;
+        Jelly.JellyFilled -= OnJellyFill;
     }
 
-    private void JellyFill()
+    private void OnJellyFill()
     {
-        for (int i = 0; i < _allBlock.Count; i++)
+        for (int i = 0; i < _allJelly.Count; i++)
         {
-            if (_allBlock[i].IsJelly == false)
+            if (_allJelly[i].StepsCount == 0)
             {
-                _isFinish = false;
-                break;
+                _isFinish = true;
             }
             else
             {
-                _isFinish = true;
+                _isFinish = false;
+                break;
             }
         }
 
@@ -64,57 +79,64 @@ public class Victory : MonoBehaviour
             Finish();
     }
 
-    private int CalculatePoints()
+    private int CalculateCoins()
     {
         _timeForOneStart = _timer.TimeStart / multiplierThree;
         _timeForTwoStart = _timeForOneStart * multiplierTwo;
 
         if (_timer.CurrentTime <= _timeForOneStart)
-            return PointsForOneStar;
+            return CoinsForOneStar;
         else if (_timer.CurrentTime <= _timeForTwoStart)
-            return PointsForTwoStar;
+            return CoinsForTwoStar;
         else if (_timer.CurrentTime > _timeForTwoStart)
-            return PointsForThreeStar;
+            return CoinsForThreeStar;
         else
-            return 0;        
+            return 0;
     }
 
     private void CalculateStars()
     {
-        _previosStarsCount = PlayerPrefs.GetInt(_mapMame);
-        _pointsForLevel = CalculatePoints();
+        _coinsForLevel = CalculateCoins();
 
-        switch (_pointsForLevel)
+        switch (_coinsForLevel)
         {
-            case PointsForOneStar: _currentStarsCount = OneStar; break;
-            case PointsForTwoStar: _currentStarsCount = TwoStar; break;
-            case PointsForThreeStar: _currentStarsCount = ThreeStar; break;
+            case CoinsForOneStar: _currentStarsCount = OneStar; break;
+            case CoinsForTwoStar: _currentStarsCount = TwoStar; break;
+            case CoinsForThreeStar: _currentStarsCount = ThreeStar; break;
         }
+
+        _previosStarsCount = _starsLevels.GetCurrentStarsLevel(_levelNumber);
     }
 
     private void Finish()
     {
-        LevelFinised?.Invoke();
+        CalculateStars();
+        TrySaveCoins();
         TrySaveStars();
-        TrySavePoints();
+
+        _openLevels.TryOpenLevel(_nextLevelNumber);
+        _dataProvider.Save();
+
         StarsCalculated?.Invoke(_currentStarsCount);
-        PlayerPrefs.SetInt(UnlockedMapsKey, SceneManager.GetActiveScene().buildIndex + FirstMapIndex);
+        LevelFinised?.Invoke();
     }
 
-    private void TrySavePoints()
+    private void TrySaveCoins()
     {
         if (_currentStarsCount - _previosStarsCount > 0)
         {
-            int bousPoints = PointsForOneStar * (_currentStarsCount - _previosStarsCount);
-            _player.AddPoints(bousPoints);
+            int bonusCoints = CoinsForOneStar * (_currentStarsCount - _previosStarsCount);
+
+            _wallet.AddCoin(bonusCoints);
+
+            _dataProvider.Save();
         }
     }
 
     private void TrySaveStars()
     {
-        CalculateStars();
+        _starsLevels.TryAddStars(_levelNumber, _currentStarsCount);
 
-        if (_currentStarsCount > PlayerPrefs.GetInt(_mapMame))
-            PlayerPrefs.SetInt(_mapMame, _currentStarsCount);
+        _dataProvider.Save();
     }
 }

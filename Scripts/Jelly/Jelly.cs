@@ -181,16 +181,16 @@ public abstract class Jelly : MonoBehaviour
         switch (step)
         {
             case LeftStep:
-                _jelly[headIndex].Fill(_materialJelly, _prefabs.GetFinishMeshByIndex(2), Name);
+                _jelly[headIndex].Fill(_materialJelly, _prefabs.GetHeadMeshByIndex(2), Name);
                 break;
             case RightStep:
-                _jelly[headIndex].Fill(_materialJelly, _prefabs.GetFinishMeshByIndex(3), Name);
+                _jelly[headIndex].Fill(_materialJelly, _prefabs.GetHeadMeshByIndex(3), Name);
                 break;
             case TopStep:
-                _jelly[headIndex].Fill(_materialJelly, _prefabs.GetFinishMeshByIndex(1), Name);
+                _jelly[headIndex].Fill(_materialJelly, _prefabs.GetHeadMeshByIndex(1), Name);
                 break;
             case BotStep:
-                _jelly[headIndex].Fill(_materialJelly, _prefabs.GetFinishMeshByIndex(0), Name);
+                _jelly[headIndex].Fill(_materialJelly, _prefabs.GetHeadMeshByIndex(0), Name);
                 break;
         }
     }

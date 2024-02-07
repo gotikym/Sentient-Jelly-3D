@@ -5,7 +5,6 @@ using UnityEngine.SceneManagement;
 public abstract class EndGamePanel : MonoBehaviour
 {
     [SerializeField] protected GameObject Panel;
-    //[SerializeField] protected GameObject LoadScreen;
 
     protected int StoppedTimeScale = 0;
     protected int RunningTimeScale = 1;
@@ -24,7 +23,6 @@ public abstract class EndGamePanel : MonoBehaviour
 
     public void OnMainMenuButtonClick()
     {
-        //LoadScreen.SetActive(true);
         Main.Load();
         Time.timeScale = RunningTimeScale;
     }
@@ -32,14 +30,19 @@ public abstract class EndGamePanel : MonoBehaviour
     public void OnNextLevelButtonClick()
     {
         Panel.SetActive(false);
-        //LoadScreen.SetActive(true);
         Time.timeScale = RunningTimeScale;
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + NextSceneIndex);
     }
 
-    protected void OpenPanel()
+    protected virtual void OpenPanel()
     {
         Panel.SetActive(true);
         Time.timeScale = StoppedTimeScale;
+    }
+
+    protected void ClosePanel()
+    {
+        Panel.SetActive(false);
+        Time.timeScale = RunningTimeScale;
     }
 }

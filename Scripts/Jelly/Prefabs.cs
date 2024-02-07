@@ -5,7 +5,7 @@ using UnityEngine;
 public class Prefabs : MonoBehaviour
 {
     [SerializeField] private List<GameObject> _tail;
-    [SerializeField] private List<GameObject> _finish;
+    [SerializeField] private List<GameObject> _heads;
     [SerializeField] private List<GameObject> _body;
     [SerializeField] private List<GameObject> _turn;
 
@@ -24,8 +24,8 @@ public class Prefabs : MonoBehaviour
         return _turn.ElementAt(index);
     }
 
-    public GameObject GetFinishMeshByIndex(int index)
+    public GameObject GetHeadMeshByIndex(int index)
     {
-        return _finish.ElementAt(index);
+        return _heads.ElementAt(index);
     }
 }

@@ -18,7 +18,7 @@ public class Timer : MonoBehaviour
 
     private void Start()
     {
-        _currentTime = _timeStart;
+        ResetTime();
         _timerText.text = _currentTime.ToString();
         _nameLevelText.text = "Level " + SceneManager.GetActiveScene().buildIndex;
     }
@@ -26,6 +26,11 @@ public class Timer : MonoBehaviour
     private void FixedUpdate()
     {
         SubtractTime();
+    }
+
+    public void ResetTime()
+    {
+        _currentTime = _timeStart;
     }
 
     private void SubtractTime()

@@ -1,36 +1,70 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class LevelDisplay : MonoBehaviour
 {
+    [SerializeField] private Button _button;
     [SerializeField] private GameObject _lockImage;
     [SerializeField] private GameObject _focusImage;
-    [SerializeField] private List<GameObject> _stars;
+    [SerializeField] private List<GameObject> _activeStars;
+    [SerializeField] private List<GameObject> _notActiveStars;
     [SerializeField] private int _level;
 
-    private const string UnlockedMapsKey = "unlockedMaps";
-    private const string NameLevel = "Level";
+    private const int _runningTimeScale = 1;
+    private const int MaxStars = 3;
 
-    private string _nameLevel;
+    private int _stars = 3;
+
     private int _starsCount;
+    private int _openLevelsCount;
 
-    public int Level => _level;
+    private void OnEnable() => _button.onClick.AddListener(OnButtonClick);
+    private void OnDisable() => _button.onClick.RemoveListener(OnButtonClick);
 
-    private void OnEnable()
+    public void SetLevelDisplay(int openLevelsCount, int starsLevel)
     {
-        StartSettingsDisplay();
+        _openLevelsCount = openLevelsCount;
+        OffAllStars();
+
+
+        _focusImage.SetActive(false);
+
+        _starsCount = starsLevel;
+
+        DisplayLevel(openLevelsCount);
+
+        SetStars();
+        SetNotActiveStars();
     }
 
-    private void DisplayLevel()
+    public void OnButtonClick()
     {
-        if (PlayerPrefs.GetInt(UnlockedMapsKey) < _level)
+        if (_openLevelsCount >= _level)
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + _level);
+            Time.timeScale = _runningTimeScale;
+        }
+    }
+
+    public int GetLevel()
+    {
+        return _level;
+    }
+
+    private void DisplayLevel(int openLevelsCount)
+    {
+        if (openLevelsCount < _level)
         {
             _lockImage.SetActive(true);
         }
-        else if (PlayerPrefs.GetInt(UnlockedMapsKey) >= _level)
+        else if (openLevelsCount >= _level)
         {
             _lockImage.SetActive(false);
-            _focusImage.SetActive(true);
+
+            if (_starsCount > 0)
+                _focusImage.SetActive(true);
         }
     }
 
@@ -38,26 +72,26 @@ public class LevelDisplay : MonoBehaviour
     {
         if (_starsCount >= 0)
             for (int i = 0; i < _starsCount; i++)
-                _stars[i].SetActive(true);
+            {
+                _activeStars[i].SetActive(true);
+                _stars--;
+            }
+    }
+
+    private void SetNotActiveStars()
+    {
+        for (int i = 0; i < _stars; i++)
+            _notActiveStars[i].SetActive(true);
     }
 
     private void OffAllStars()
     {
-        foreach (var star in _stars)
+        foreach (var star in _activeStars)
             star.SetActive(false);
-    }
 
-    private void StartSettingsDisplay()
-    {
-        OffAllStars();
+        foreach (var star in _notActiveStars)
+            star.SetActive(false);
 
-        _nameLevel = NameLevel + _level;
-        _focusImage.SetActive(false);
-
-        DisplayLevel();
-
-        _starsCount = PlayerPrefs.GetInt(_nameLevel);
-
-        SetStars();
+        _stars = MaxStars;
     }
 }
