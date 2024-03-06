@@ -1,16 +1,17 @@
-using System.Collections.Generic;
 using UnityEngine;
 
 public class GameBootstrap : BootsTrap
 {
     [SerializeField] private Victory _victory;
     [SerializeField] private BordersMaterial _bordersMaterial;
-    [SerializeField] private MusicSwitch _musicSwitch;
+    [SerializeField] private SwitchPauseSounds _musicSwitch;
+    [SerializeField] private BackgroundMusic _playBackgroundMusic;
+    [SerializeField] private JellyStepSound _jellyStepSound;
 
     private Wallet _wallet;
     private OpenLevels _openLevels;
     private StarsLevels _starsLevels;
-    private MusicVolume _musicVolume;
+    private Music _music;
 
     protected override void Awake()
     {
@@ -24,7 +25,7 @@ public class GameBootstrap : BootsTrap
 
         InitializeBorders();
 
-        InitializeMusicVolume();
+        InitializeMusic();        
     }
 
     private void InitializeWallet()
@@ -50,9 +51,23 @@ public class GameBootstrap : BootsTrap
         _bordersMaterial.Initialize(borderSkins);
     }
 
-    private void InitializeMusicVolume()
+    private void InitializeMusic()
     {
-        _musicVolume = new(_persistentPlayerData);
-        _musicSwitch.Initialize(_musicVolume, _dataProvider);
+        _music = new(_persistentPlayerData);
+        _musicSwitch.Initialize(_music, _dataProvider);
+
+        InitializeBackgroundMusic();
+
+        InitializeJellyStepSound();
+    }
+
+    private void InitializeBackgroundMusic()
+    {
+        _playBackgroundMusic.Initialize(_music, _dataProvider);
+    }
+
+    private void InitializeJellyStepSound()
+    {
+        _jellyStepSound.Initialize(_music.GetCurrentSFXStatus());
     }
 }

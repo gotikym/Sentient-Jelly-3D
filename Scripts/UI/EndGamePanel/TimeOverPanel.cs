@@ -1,8 +1,6 @@
-using UnityEngine;
-
 public class TimeOverPanel : EndGamePanel
 {
-    [SerializeField] private Timer _timer;
+    public override string AnimationName => "TimeOver";
 
     protected override void OnEnable()
     {

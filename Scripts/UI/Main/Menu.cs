@@ -3,6 +3,8 @@ using UnityEngine;
 
 public class Menu : MonoBehaviour
 {
+    [SerializeField] private BackgroundMusic _backgroundMusic;
+
     private int _stoppedTimeScale = 0;
     private int _runningTimeScale = 1;
 
@@ -25,12 +27,14 @@ public class Menu : MonoBehaviour
 
     public void GoToMain()
     {
+        _backgroundMusic.SetCurrentSamples();
         Main.Load();
         Time.timeScale = _runningTimeScale;
     }
 
     public void Exit()
     {
+        _backgroundMusic.SetCurrentSamples();
         Application.Quit();
     }
 }

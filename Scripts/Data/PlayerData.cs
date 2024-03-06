@@ -16,13 +16,17 @@ public class PlayerData
 
     private int _money;
     private int _openLevels;
-    private int _musicVolume;
+    private int _pauseMusic;
+    private int _soundLength;
+    private int _pauseSFX;
 
     public PlayerData()
     {
         _money = 0;
         _openLevels = 1;
-        _musicVolume = 1;
+        _pauseMusic = 0;
+        _soundLength = 0;
+        _pauseSFX = 0;
 
         _selectedHatSkin = HatSkins.Crone;
         _selectedBorderSkin = BorderSkins.bicolor1;
@@ -34,12 +38,14 @@ public class PlayerData
     }
 
     [JsonConstructor]
-    public PlayerData(int money, int openLevels, int musicVolume, HatSkins selectedHatSkin, BorderSkins selectedBorderSkin,
+    public PlayerData(int money, int openLevels, int pauseMusic, int pauseSFX, int soundLength, HatSkins selectedHatSkin, BorderSkins selectedBorderSkin,
         List<BorderSkins> openBorderSkins, List<HatSkins> openHatSkins, List<int> starsLevels)
     {
         Money = money;
         OpenLevels = openLevels;
-        MusicVolume = musicVolume;
+        PauseMusicStatus = pauseMusic;
+        PauseSFXStatus = pauseSFX;
+        SoundLength = soundLength;
 
         _selectedHatSkin = selectedHatSkin;
         _selectedBorderSkin = selectedBorderSkin;
@@ -74,15 +80,39 @@ public class PlayerData
         }
     }
 
-    public int MusicVolume
+    public int PauseMusicStatus
     {
-        get => _musicVolume;
+        get => _pauseMusic;
         set
         {
             if (value < 0 || value > 1)
                 throw new ArgumentOutOfRangeException(nameof(value));
 
-            _musicVolume = value;
+            _pauseMusic = value;
+        }
+    }
+
+    public int PauseSFXStatus
+    {
+        get => _pauseSFX;
+        set
+        {
+            if (value < 0 || value > 1)
+                throw new ArgumentOutOfRangeException(nameof(value));
+
+            _pauseSFX = value;
+        }
+    }
+
+    public int SoundLength
+    {
+        get => _soundLength;
+        set
+        {
+            if (value < 0)
+                throw new ArgumentOutOfRangeException(nameof(value));
+
+            _soundLength = value;
         }
     }
 

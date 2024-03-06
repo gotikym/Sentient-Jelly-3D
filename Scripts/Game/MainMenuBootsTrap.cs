@@ -1,3 +1,4 @@
+using Agava.YandexGames;
 using UnityEngine;
 
 public class MainMenuBootsTrap : BootsTrap
@@ -5,15 +6,18 @@ public class MainMenuBootsTrap : BootsTrap
     [SerializeField] private Shop _shop;
     [SerializeField] private WalletView _walletView;
     [SerializeField] private ListLevelDisplay _listLevelDisplays;
-    [SerializeField] private MusicSwitch _musicSwitch;
+    [SerializeField] private SwitchPauseSounds _musicSwitch;
+    [SerializeField] private BackgroundMusic _playBackgroundMusic;
 
     private Wallet _wallet;
     private OpenLevels _openLevels;
     private StarsLevels _starsLevels;
-    private MusicVolume _musicVolume;
+    private Music _music;
 
     protected override void Awake()
     {
+        OnCallGameReady();
+
         base.Awake();
 
         InitializeWallet();
@@ -23,6 +27,8 @@ public class MainMenuBootsTrap : BootsTrap
         InitializeShop();
 
         InitializeMusicVolume();
+
+        InitializeBackgroundMusic();
     }
 
     private void InitializeWallet()
@@ -52,7 +58,17 @@ public class MainMenuBootsTrap : BootsTrap
 
     private void InitializeMusicVolume()
     {
-        _musicVolume = new(_persistentPlayerData);
-        _musicSwitch.Initialize(_musicVolume, _dataProvider);
+        _music = new(_persistentPlayerData);
+        _musicSwitch.Initialize(_music, _dataProvider);
+    }
+
+    private void InitializeBackgroundMusic()
+    {
+        _playBackgroundMusic.Initialize(_music, _dataProvider);
+    }
+
+    private void OnCallGameReady()
+    {
+        YandexGamesSdk.GameReady();
     }
 }

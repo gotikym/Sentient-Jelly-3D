@@ -41,7 +41,7 @@ public class Shop : MonoBehaviour
         _selectionButton.onClick.AddListener(OnSelectionButtonClick);
     }
 
-    private void OnDisable()
+    private void OnDestroy()
     {
         _hatSkinsButton.Click -= OnHatSkinsButtonClick;
         _borderSkinsButton.Click -= OnBorderSkinsButtonClick;

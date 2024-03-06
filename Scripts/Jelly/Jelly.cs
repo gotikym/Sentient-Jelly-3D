@@ -65,12 +65,14 @@ public abstract class Jelly : MonoBehaviour
             {
                 IncreaseJelly(block);
                 _stepsCount--;
+                JellyChanged?.Invoke();
                 StepsCountChanged?.Invoke(_stepsCount);
             }
             else if (step == stepSize && block.IsJelly == true)
             {
                 DecreaseJelly(_jelly[lastIndex]);
                 _stepsCount++;
+                JellyChanged?.Invoke();
                 StepsCountChanged?.Invoke(_stepsCount);
             }
         }
@@ -80,7 +82,6 @@ public abstract class Jelly : MonoBehaviour
 
         if (_stepsCount == 0)
         {
-            JellyChanged?.Invoke();
             JellyFilled?.Invoke();
         }
     }

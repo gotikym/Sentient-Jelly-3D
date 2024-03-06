@@ -116,7 +116,7 @@ public class Victory : MonoBehaviour
 
         _openLevels.TryOpenLevel(_nextLevelNumber);
         _dataProvider.Save();
-
+        
         StarsCalculated?.Invoke(_currentStarsCount);
         LevelFinised?.Invoke();
     }

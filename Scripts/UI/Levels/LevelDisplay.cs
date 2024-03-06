@@ -11,6 +11,7 @@ public class LevelDisplay : MonoBehaviour
     [SerializeField] private List<GameObject> _activeStars;
     [SerializeField] private List<GameObject> _notActiveStars;
     [SerializeField] private int _level;
+    [SerializeField] private BackgroundMusic _backgroundMusic;
 
     private const int _runningTimeScale = 1;
     private const int MaxStars = 3;
@@ -43,6 +44,7 @@ public class LevelDisplay : MonoBehaviour
     {
         if (_openLevelsCount >= _level)
         {
+            _backgroundMusic.SetCurrentSamples();
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + _level);
             Time.timeScale = _runningTimeScale;
         }

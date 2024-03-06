@@ -18,7 +18,7 @@ public class Block : MonoBehaviour
 
         var mesh = Instantiate(meshJelly).transform;
         mesh.SetParent(transform);
-        mesh.localPosition = new Vector3(0, 0.25f, 0);
+        mesh.localPosition = new Vector3(0, 0, 0);
 
         _isJelly = true;
         _jellyName = jellyName;
